@@ -103,11 +103,15 @@ impl Game {
         let (max_x, max_y) = Self::paddle_bounds();
         let mut dx = 0.0f32;
         let mut dy = 0.0f32;
+        // Note: with this camera's look direction (+Z) and up (+Y), the
+        // right-handed view basis puts world +X on the *left* of the
+        // screen (right = cross(dir, up) = -X here). So "move right"
+        // must decrease world X to feel correct from the player's view.
         if self.move_left {
-            dx -= 1.0;
+            dx += 1.0;
         }
         if self.move_right {
-            dx += 1.0;
+            dx -= 1.0;
         }
         if self.move_up {
             dy += 1.0;
