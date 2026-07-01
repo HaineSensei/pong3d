@@ -13,6 +13,13 @@ pub const PADDLE_Z_AI: f32 = DEPTH - 1.4;
 pub const PADDLE_SPEED: f32 = 9.0;
 pub const AI_SPEED: f32 = 6.2;
 
+// How far back from the paddle plane the camera sits. Needs to be large
+// enough relative to PADDLE_HALF that the whole translucent bat is
+// visible on screen (with margin), rather than filling/overflowing the
+// view -- the point of the translucent bat is to actually be able to see
+// its edges and judge whether the ball will miss it.
+pub const CAMERA_SETBACK: f32 = 2.6;
+
 pub const BALL_RADIUS: f32 = 0.35;
 pub const BALL_BASE_SPEED: f32 = 9.0;
 pub const BALL_MAX_SPEED: f32 = 22.0;

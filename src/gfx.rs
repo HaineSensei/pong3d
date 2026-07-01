@@ -223,7 +223,11 @@ impl Graphics {
         });
 
         // --- static room mesh ---
-        let room_verts = geometry::room_mesh(game::HALF_W, game::HALF_H, -2.0, game::DEPTH + 2.0);
+        // Extends a bit behind the player's camera position (which now
+        // sits CAMERA_SETBACK units behind the paddle plane) so the walls
+        // still surround the viewer instead of ending abruptly nearby.
+        let room_z_min = game::PADDLE_Z_PLAYER - game::CAMERA_SETBACK - 2.0;
+        let room_verts = geometry::room_mesh(game::HALF_W, game::HALF_H, room_z_min, game::DEPTH + 2.0);
         let room_vbuf = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("room vbuf"),
             contents: bytemuck::cast_slice(&room_verts),
@@ -329,8 +333,11 @@ impl Graphics {
         let height = self.config.height as f32;
         let aspect = width / height.max(1.0);
 
-        // --- camera: embedded at the player's paddle, looking down +Z ---
-        let camera_z = game::PADDLE_Z_PLAYER - 0.9;
+        // --- camera: pulled back from the player's paddle, looking down +Z ---
+        // Set back far enough that the translucent bat is fully visible on
+        // screen (not overflowing it) -- you should be able to see its
+        // edges against the room behind it.
+        let camera_z = game::PADDLE_Z_PLAYER - game::CAMERA_SETBACK;
         let eye = Vec3::new(game.player_pos.x, game.player_pos.y, camera_z);
         let view_mat = glam::camera::rh::view::look_to_mat4(eye, Vec3::Z, Vec3::Y);
         let proj = glam::camera::rh::proj::directx::perspective(70f32.to_radians(), aspect, 0.05, 100.0);
